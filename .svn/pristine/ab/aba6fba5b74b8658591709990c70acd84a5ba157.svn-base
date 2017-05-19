@@ -1,0 +1,88 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Web.Http;
+using DataService;
+
+namespace WebAPI.Controllers
+{
+    public class VoteAdminController : ApiController
+    {
+        // GET: api/VoteAdmin
+        public IEnumerable<string> Get()
+        {
+            return new string[] { "value1"+DateTime.Now, "value2" };
+        }
+
+        // GET: api/VoteAdmin/5
+        public string Get(int id)
+        {
+            var db = new SZYdbEntities();
+            var res = id.ToString();
+            var barCode = id.ToString().Substring(0, 5);
+            var list = db.Shares.Where(s => s.IsPresent == true).ToList(); //查出所有已经签到的人员名单
+            var curShareholder = list.FirstOrDefault(s => s.BarCode == barCode); //如查不到，返回null。
+            //开始逻辑判断
+            //有待先加身份证验证！
+            if (curShareholder == null) return "无法找到此股东！";
+            else
+            {
+                curShareholder.T0Result = int.Parse(res.Substring(0, 6));
+                curShareholder.T1Result = int.Parse(res.Substring(0, 7));
+                curShareholder.T2Result = int.Parse(res.Substring(0, 8));
+                curShareholder.T3Result = int.Parse(res.Substring(0, 9));
+                curShareholder.T4Result = int.Parse(res.Substring(0, 10));
+                curShareholder.T5Result = int.Parse(res.Substring(0, 11));
+                curShareholder.T6Result = int.Parse(res.Substring(0, 12));
+                curShareholder.T7Result = int.Parse(res.Substring(0, 13));
+                curShareholder.T8Result = int.Parse(res.Substring(0, 14));
+                curShareholder.T9Result = int.Parse(res.Substring(0, 15));
+                curShareholder.VotingTime = DateTime.Now; //投票时间
+                curShareholder.IsVoted = true;//设置股东投票标识符
+                db.SaveChanges();
+                return "投票完成！";
+            }
+        }
+
+        // POST: api/VoteAdmin
+        public string Post(string id)
+        {
+            var db = new SZYdbEntities();
+            var barCode = id.Substring(0, 5);
+            var list = db.Shares.Where(s => s.IsPresent == true).ToList(); //查出所有已经签到的人员名单
+            var curShareholder = list.FirstOrDefault(s => s.BarCode == barCode); //如查不到，返回null。
+            //开始逻辑判断
+            //有待先加身份证验证！
+            if (curShareholder == null) return "无法找到此股东！";
+            else
+            {
+                curShareholder.T0Result = int.Parse(id.Substring(0, 6));
+                curShareholder.T1Result = int.Parse(id.Substring(0, 7));
+                curShareholder.T2Result = int.Parse(id.Substring(0, 8));
+                curShareholder.T3Result = int.Parse(id.Substring(0, 9));
+                curShareholder.T4Result = int.Parse(id.Substring(0, 10));
+                curShareholder.T5Result = int.Parse(id.Substring(0, 11));
+                curShareholder.T6Result = int.Parse(id.Substring(0, 12));
+                curShareholder.T7Result = int.Parse(id.Substring(0, 13));
+                curShareholder.T8Result = int.Parse(id.Substring(0, 14));
+                curShareholder.T9Result = int.Parse(id.Substring(0, 15));
+                curShareholder.VotingTime = DateTime.Now; //投票时间
+                curShareholder.IsVoted = true;//设置股东投票标识符
+                db.SaveChanges();
+                return "投票完成！";
+            }
+        }
+
+        // PUT: api/VoteAdmin/5
+        public void Put(int id, [FromBody]string value)
+        {
+        }
+
+        // DELETE: api/VoteAdmin/5
+        public void Delete(int id)
+        {
+        }
+    }
+}

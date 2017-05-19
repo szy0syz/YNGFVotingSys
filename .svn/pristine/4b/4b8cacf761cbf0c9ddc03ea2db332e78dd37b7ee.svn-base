@@ -1,0 +1,21 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+
+namespace WebAPI.Models
+{
+    public partial class ClientView
+    {
+
+        public int TotalShareholders { get; set; }
+
+        public int VotedSahreholders { get; set; }
+
+        public int NoVotedSahreholders
+        {
+            get { return this.TotalShareholders - this.VotedSahreholders; }
+        }
+
+    }
+}

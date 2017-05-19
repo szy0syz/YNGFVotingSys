@@ -1,0 +1,132 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="SZYdbModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Shares">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" Nullable="false" />
+          <Property Name="BarCode" Type="nvarchar" MaxLength="255" />
+          <Property Name="Number" Type="nvarchar" MaxLength="255" />
+          <Property Name="Name" Type="nvarchar" MaxLength="255" />
+          <Property Name="Shares" Type="float" />
+          <Property Name="Rate" Type="float" />
+          <Property Name="Type" Type="nvarchar" MaxLength="255" />
+          <Property Name="VotingTime" Type="datetime" />
+          <Property Name="Time" Type="datetime" />
+          <Property Name="Remark" Type="nvarchar" MaxLength="255" />
+          <Property Name="Enable" Type="bit" />
+          <Property Name="IsPresent" Type="bit" />
+          <Property Name="IsVoted" Type="bit" />
+          <Property Name="T0Result" Type="int" />
+          <Property Name="T1Result" Type="int" />
+          <Property Name="T2Result" Type="int" />
+          <Property Name="T3Result" Type="int" />
+          <Property Name="T4Result" Type="int" />
+          <Property Name="T5Result" Type="int" />
+          <Property Name="T6Result" Type="int" />
+          <Property Name="T7Result" Type="int" />
+          <Property Name="T8Result" Type="int" />
+          <Property Name="T9Result" Type="int" />
+        </EntityType>
+        <EntityContainer Name="SZYdbModelStoreContainer">
+          <EntitySet Name="Shares" EntityType="Self.Shares" Schema="dbo" store:Type="Tables" />
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="SZYdbModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Shares">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" />
+          <Property Name="BarCode" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="Number" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="Name" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="Shares1" Type="Double" />
+          <Property Name="Rate" Type="Double" />
+          <Property Name="Type" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="VotingTime" Type="DateTime" Precision="3" />
+          <Property Name="Time" Type="DateTime" Precision="3" />
+          <Property Name="Remark" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="Enable" Type="Boolean" />
+          <Property Name="T0Result" Type="Int32" />
+          <Property Name="T1Result" Type="Int32" />
+          <Property Name="T2Result" Type="Int32" />
+          <Property Name="T3Result" Type="Int32" />
+          <Property Name="T4Result" Type="Int32" />
+          <Property Name="T5Result" Type="Int32" />
+          <Property Name="T6Result" Type="Int32" />
+          <Property Name="T7Result" Type="Int32" />
+          <Property Name="T8Result" Type="Int32" />
+          <Property Name="T9Result" Type="Int32" />
+          <Property Name="IsPresent" Type="Boolean" />
+          <Property Name="IsVoted" Type="Boolean" />
+        </EntityType>
+        <EntityContainer Name="SZYdbEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Shares" EntityType="Self.Shares" />
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="SZYdbModelStoreContainer" CdmEntityContainer="SZYdbEntities">
+          <EntitySetMapping Name="Shares">
+            <EntityTypeMapping TypeName="SZYdbModel.Shares">
+              <MappingFragment StoreEntitySet="Shares">
+                <ScalarProperty Name="IsVoted" ColumnName="IsVoted" />
+                <ScalarProperty Name="IsPresent" ColumnName="IsPresent" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="BarCode" ColumnName="BarCode" />
+                <ScalarProperty Name="Number" ColumnName="Number" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Shares1" ColumnName="Shares" />
+                <ScalarProperty Name="Rate" ColumnName="Rate" />
+                <ScalarProperty Name="Type" ColumnName="Type" />
+                <ScalarProperty Name="VotingTime" ColumnName="VotingTime" />
+                <ScalarProperty Name="Time" ColumnName="Time" />
+                <ScalarProperty Name="Remark" ColumnName="Remark" />
+                <ScalarProperty Name="Enable" ColumnName="Enable" />
+                <ScalarProperty Name="T0Result" ColumnName="T0Result" />
+                <ScalarProperty Name="T1Result" ColumnName="T1Result" />
+                <ScalarProperty Name="T2Result" ColumnName="T2Result" />
+                <ScalarProperty Name="T3Result" ColumnName="T3Result" />
+                <ScalarProperty Name="T4Result" ColumnName="T4Result" />
+                <ScalarProperty Name="T5Result" ColumnName="T5Result" />
+                <ScalarProperty Name="T6Result" ColumnName="T6Result" />
+                <ScalarProperty Name="T7Result" ColumnName="T7Result" />
+                <ScalarProperty Name="T8Result" ColumnName="T8Result" />
+                <ScalarProperty Name="T9Result" ColumnName="T9Result" />
+                </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="false" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="无" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

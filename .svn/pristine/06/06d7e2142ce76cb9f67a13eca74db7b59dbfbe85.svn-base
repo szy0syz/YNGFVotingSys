@@ -1,0 +1,30 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+
+namespace WebAPI.Models
+{
+    public class UintStatistic
+    {
+        public double? PresentShares{ get; set;}
+
+        public double? AgreeShares { get; set; }
+
+        public double? AgreeCount { get; set; }
+
+        public double? DisagreeShares { get; set; }
+
+        public double? DisagreeCount { get; set; }
+
+        public double? NonShares { get; set; }
+
+        public double? NonCount { get; set; }
+
+        public double? AgreeRate { get; set; }
+
+        public double? DisagreeRate { get; set; }
+
+        public double? NonRate { get; set; }
+    }
+}

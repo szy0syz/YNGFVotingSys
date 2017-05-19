@@ -1,0 +1,85 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Web.Http;
+using DataService;
+
+namespace WebAPI.Controllers
+{
+    public class SettingsController : ApiController
+    {
+        // GET: api/Settings
+        public IEnumerable<string> Get()
+        {
+            return new string[] { "value1", "value2" };
+        }
+
+        // GET: api/Settings/5
+        public string Get(int id)
+        {
+            return "value";
+        }
+
+        // POST: api/Settings
+        public void Post(Models.SettingView model)
+        {
+            //检查model合法性 
+            if (model != null)
+            {
+                var db = new SZYdbEntities();
+                DataService.Settings setting = null;
+                if (model.TypeCode == "General")
+                {
+                    setting = db.Settings.FirstOrDefault(s => s.TypeCode == model.TypeCode && s.SettingValue == model.SettingKey);
+                    if (setting != null)
+                    {
+                        setting.SettingKey = model.SettingValue;
+                        db.SaveChanges();
+                    }
+                    else
+                    {
+                        
+                    }
+                }
+                if(model.TypeCode == "Other")
+                {
+                    switch (model.SettingKey)
+                    {
+                        case "ClearOnePresent":
+                            var d = db.Shares.FirstOrDefault(s => s.BarCode == model.SettingValue);
+                            if (d != null)
+                            {
+                                d.IsPresent = false;
+                                db.SaveChanges();
+                            }
+                            else
+                            {
+
+                            }
+                            break;
+                        case "ClearAllPresent":
+                            var shareList = db.Shares.Where(s => s.BarCode == model.SettingValue);
+                            foreach (var item in shareList)
+                            {
+                                item.IsPresent = false;
+                                db.SaveChanges();
+                            }
+                            break;
+                    }
+                }
+            }
+        }
+
+        // PUT: api/Settings/5
+        public void Put(int id, [FromBody]string value)
+        {
+        }
+
+        // DELETE: api/Settings/5
+        public void Delete(int id)
+        {
+        }
+    }
+}

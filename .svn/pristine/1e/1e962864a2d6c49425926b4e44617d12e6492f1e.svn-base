@@ -1,0 +1,134 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Web.Http;
+using DataService;
+
+namespace WebAPI.Controllers
+{
+    public class VoteController : ApiController
+    {
+        // GET: api/Vote
+        public IEnumerable<Models.VotedList> Get()
+        {
+            var db = new SZYdbEntities();
+            var res = db.Shares.Where(s => s.Enable == true).Select(s=> new Models.VotedList()
+            {
+                BarCode = s.BarCode,
+                Name = s.Name,
+                IsPresent = s.IsPresent,
+                IsVoted = s.IsVoted,
+                Rate = s.Rate,
+                Shares = s.Shares1,
+                T0Result = s.T0Result,
+                T1Result = s.T1Result,
+                T2Result = s.T2Result,
+                T3Result = s.T3Result,
+                T4Result = s.T4Result,
+                T5Result = s.T5Result,
+                T6Result = s.T6Result,
+                T7Result = s.T7Result,
+                T8Result = s.T8Result,
+                T9Result = s.T9Result
+            });
+            ////初始化返回对象
+            //Models.AdminView model = new Models.AdminView(res.ToList());
+
+            return res;
+        }
+
+        // GET: api/Vote/5
+        public string Get(int id)
+        {
+            return "value";
+        }
+
+        // POST: api/Vote
+        //用于客服端的投票！
+        public string Post(Models.UploadedData model)
+        {
+            //对model的验证！
+            if (!VerifyingModel(model)) return "非法提交！";
+
+            var db = new SZYdbEntities();
+            var list = db.Shares.Where(s => s.IsPresent == true).ToList(); //查出所有已经签到的人员名单
+            var curShareholder = list.FirstOrDefault(s => s.BarCode == model.ShareholderBarCode); //如查不到，返回null。
+
+            //开始逻辑判断
+            //有待先加身份证验证！
+            if (curShareholder == null) return "无法找到此股东！";
+            else
+            {
+                if (curShareholder.IsVoted == true) return "此股东已经投票，无法重复投票！";
+                else
+                {
+                    curShareholder.T0Result = int.Parse(model.VotingRes[0]);
+                    curShareholder.T1Result = int.Parse(model.VotingRes[1]);
+                    curShareholder.T2Result = int.Parse(model.VotingRes[2]);
+                    curShareholder.T3Result = int.Parse(model.VotingRes[3]);
+                    curShareholder.T4Result = int.Parse(model.VotingRes[4]);
+                    curShareholder.T5Result = int.Parse(model.VotingRes[5]);
+                    curShareholder.T6Result = int.Parse(model.VotingRes[6]);
+                    curShareholder.T7Result = int.Parse(model.VotingRes[7]);
+                    curShareholder.T8Result = int.Parse(model.VotingRes[8]);
+                    curShareholder.T9Result = int.Parse(model.VotingRes[9]);
+                    curShareholder.VotingTime = DateTime.Now; //投票时间
+                    curShareholder.IsVoted = true;//设置股东投票标识符
+                    db.SaveChanges();
+                    return "投票完成！";
+                }
+            }
+        }
+
+        // PUT: api/Vote/5
+        //用于后台页面的表决录入
+        public string Put(string id, [FromBody]string value)
+        {
+            var db = new SZYdbEntities();
+            var barCode = id.Substring(0, 5);
+            var list = db.Shares.Where(s => s.IsPresent == true).ToList(); //查出所有已经签到的人员名单
+            var curShareholder = list.FirstOrDefault(s => s.BarCode == barCode); //如查不到，返回null。
+            //开始逻辑判断
+            //有待先加身份证验证！
+            if (curShareholder == null) return "无法找到此股东！";
+            else
+            {
+                curShareholder.T0Result = int.Parse(id.Substring(0, 6));
+                curShareholder.T1Result = int.Parse(id.Substring(0, 7));
+                curShareholder.T2Result = int.Parse(id.Substring(0, 8));
+                curShareholder.T3Result = int.Parse(id.Substring(0, 9));
+                curShareholder.T4Result = int.Parse(id.Substring(0, 10));
+                curShareholder.T5Result = int.Parse(id.Substring(0, 11));
+                curShareholder.T6Result = int.Parse(id.Substring(0, 12));
+                curShareholder.T7Result = int.Parse(id.Substring(0, 13));
+                curShareholder.T8Result = int.Parse(id.Substring(0, 14));
+                curShareholder.T9Result = int.Parse(id.Substring(0, 15));
+                curShareholder.VotingTime = DateTime.Now; //投票时间
+                curShareholder.IsVoted = true;//设置股东投票标识符
+                db.SaveChanges();
+                return "投票完成！";
+            }
+        }
+
+        // DELETE: api/Vote/5
+        public void Delete(int id)
+        {
+        }
+
+        #region 检查传递来的Model是否正确
+        /// <summary>
+        /// 检查传递来的Model是否正确
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        private bool VerifyingModel(Models.UploadedData model)
+        {
+            if (Common.Verifying.CheckIntLength(model.ShareholderBarCode, 5) &&
+                Common.Verifying.CheckIntLength(model.ShareholderIdCard, 4)) return true;
+            return false;
+        } 
+        #endregion
+    }
+}

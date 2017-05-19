@@ -1,0 +1,212 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Web.Http;
+using DataService;
+using WebAPI.Models;
+using System.Text;
+using System.Windows.Forms;
+
+namespace WebAPI.Controllers
+{
+    public class VoteAdminController : ApiController
+    {
+        // GET: api/VoteAdmin
+        public string Get()
+        {
+            var db = new SZYdbEntities();
+            var listNameNonVoted = db.Shares.Where(s => s.IsVoted == false).Select(s=>s.Name).ToArray();
+            var strNameNonVoted = string.Join(",", listNameNonVoted);
+
+            string mo = "第{0}项表决结果如下：同意的人数为{1}人，共计{2}万股，占比为{3}；反对的人数为{4}人，共计{5}万股，占比为{6}；弃权的人数为{7}人，共计{8}万股，占比为{9}。\n";
+
+            string res = TongJi(db, 4, mo);
+
+            
+
+            return res;
+        }
+
+        private string TongJi(SZYdbEntities db,int number, string strModel)
+        {
+            //计算股东人数
+            var totalCount = db.Shares.Count(s => s.Enable == true);
+            var totalShares = db.Shares.Where(s=>s.Enable  == true).Sum(s => s.Shares1);
+            //计算出总股本(喊出席或没出席的股东)
+            var totalPresentShares = db.Shares.Where(s=>s.IsPresent == true && s.Enable == true).Sum(s => s.Shares1); 
+            int presentCount = db.Shares.Where(s => s.Enable == true).Count(s => s.IsPresent == true);
+            int votedCount = db.Shares.Where(s => s.Enable == true).Count(s => s.IsVoted == true);
+            StringBuilder sb = new StringBuilder();
+
+            string mo1 = "本次表决总股份为{0}万股，应到股东{1}人，实到股东{2}人，实到股东股份为{3}万股。其中已签到股东{4}人，已表决股东{5}人。\n";
+            sb.Append(string.Format(mo1, totalShares, totalCount, presentCount, totalPresentShares, presentCount, votedCount));
+            //sb.Append("\n");//回车
+
+            for (var i = 1; i <= number; i++)
+            {
+                var model = TongJi1(i, db);
+                sb.Append(string.Format(
+                    strModel,i,
+                    model.AgreeCount,model.AgreeShares,model.AgreeRateFormatted,
+                    model.DisagreeCount, model.DisagreeShares,model.DisagreeRateFormatted,
+                    model.NonCount, model.NonShares, model.NonRateFormatted)
+                    );
+                //sb.Append("\n");//回车
+            }
+            return sb.ToString();
+        }
+
+
+        private Models.UintStatistic TongJi1(int number, SZYdbEntities db)
+        {
+            //必须出席 且 投票！
+            IQueryable<Shares> listAgree = db.Shares.Where(s=> s.IsPresent == true && s.IsVoted == true);
+            IQueryable<Shares> listDisagree = db.Shares.Where(s => s.IsPresent == true && s.IsVoted == true);
+            IQueryable<Shares> listNon = db.Shares.Where(s => s.IsPresent == true && s.IsVoted == true);
+            switch (number)
+            {
+                case 1:
+                    listAgree = listAgree.Where(s => s.T0Result == 1);
+                    listDisagree = listDisagree.Where(s => s.T0Result == 2);
+                    listNon = listNon.Where(s => s.T0Result == 3);
+                    break;
+                case 2:
+                    listAgree = listAgree.Where(s => s.T1Result == 1);
+                    listDisagree = listDisagree.Where(s => s.T1Result == 2);
+                    listNon = listNon.Where(s => s.T1Result == 3);
+                    break;
+                case 3:
+                    listAgree = listAgree.Where(s => s.T2Result == 1);
+                    listDisagree = listDisagree.Where(s => s.T2Result == 2);
+                    listNon = listNon.Where(s => s.T2Result == 3);
+                    break;
+                case 4:
+                    listAgree = listAgree.Where(s => s.T3Result == 1);
+                    listDisagree = listDisagree.Where(s => s.T3Result == 2);
+                    listNon = listNon.Where(s => s.T3Result == 3);
+                    break;
+                case 5:
+                    listAgree = listAgree.Where(s => s.T4Result == 1);
+                    listDisagree = listDisagree.Where(s => s.T4Result == 2);
+                    listNon = listNon.Where(s => s.T4Result == 3);
+                    break;
+                case 6:
+                    listAgree = listAgree.Where(s => s.T5Result == 1);
+                    listDisagree = listDisagree.Where(s => s.T5Result == 2);
+                    listNon = listNon.Where(s => s.T5Result == 3);
+                    break;
+                case 7:
+                    listAgree = listAgree.Where(s => s.T6Result == 1);
+                    listDisagree = listDisagree.Where(s => s.T6Result == 2);
+                    listNon = listNon.Where(s => s.T6Result == 3);
+                    break;
+                case 8:
+                    listAgree = listAgree.Where(s => s.T7Result == 1);
+                    listDisagree = listDisagree.Where(s => s.T7Result == 2);
+                    listNon = listNon.Where(s => s.T7Result == 3);
+                    break;
+                case 9:
+                    listAgree = listAgree.Where(s => s.T8Result == 1);
+                    listDisagree = listDisagree.Where(s => s.T8Result == 2);
+                    listNon = listNon.Where(s => s.T8Result == 3);
+                    break;
+                case 10:
+                    listAgree = listAgree.Where(s => s.T9Result == 1);
+                    listDisagree = listDisagree.Where(s => s.T9Result == 2);
+                    listNon = listNon.Where(s => s.T9Result == 3);
+                    break;
+            }
+
+            UintStatistic model = new UintStatistic
+            {
+                //实到股份已经单独列出来 fix!!!
+                PresentShares = db.Shares.Where(s => s.IsPresent == true && s.IsVoted == true).Sum(s => s.Shares1),
+                AgreeShares = listAgree.Sum(s => s.Shares1),
+                AgreeCount = listAgree.Count(),
+                DisagreeShares = listDisagree.Sum(s => s.Shares1),
+                DisagreeCount = listDisagree.Count(),
+                NonShares = listNon.Sum(s => s.Shares1),
+                NonCount = listNon.Count()
+            };
+            //实到股份 必须是 出席且投票
+            model.AgreeRate = model.AgreeShares / model.PresentShares;
+            model.DisagreeRate = model.DisagreeShares / model.PresentShares;
+            model.NonRate = model.NonShares / model.PresentShares;
+
+
+            return model;
+        }
+
+
+        // GET: api/VoteAdmin/5
+        public string Get(string id)
+        {
+            var db = new SZYdbEntities();
+            var barCode = id.ToString().Substring(0, 5);
+            var list = db.Shares.Where(s => s.IsPresent == true).ToList(); //查出所有已经签到的人员名单
+            var curShareholder = list.FirstOrDefault(s => s.BarCode == barCode); //如查不到，返回null。
+            //开始逻辑判断
+            //有待先加身份证验证！
+            if (curShareholder == null) return "无法找到此股东！";
+            else
+            {
+                curShareholder.TResult = id.Substring(5, 10);
+                curShareholder.T0Result = int.Parse(id.Substring(5, 1));
+                curShareholder.T1Result = int.Parse(id.Substring(6, 1));
+                curShareholder.T2Result = int.Parse(id.Substring(7, 1));
+                curShareholder.T3Result = int.Parse(id.Substring(8, 1));
+                curShareholder.T4Result = int.Parse(id.Substring(9, 1));
+                curShareholder.T5Result = int.Parse(id.Substring(10,1));
+                curShareholder.T6Result = int.Parse(id.Substring(11,1));
+                curShareholder.T7Result = int.Parse(id.Substring(12,1));
+                curShareholder.T8Result = int.Parse(id.Substring(13,1));
+                curShareholder.T9Result = int.Parse(id.Substring(14,1));
+                curShareholder.VotingTime = DateTime.Now; //投票时间
+                curShareholder.IsVoted = true;//设置股东投票标识符
+                db.SaveChanges();
+                return "投票完成！";
+            }
+        }
+
+        // POST: api/VoteAdmin
+        public string Post(string id)
+        {
+            var db = new SZYdbEntities();
+            var barCode = id.ToString().Substring(0, 5);
+            var list = db.Shares.Where(s => s.IsPresent == true).ToList(); //查出所有已经签到的人员名单
+            var curShareholder = list.FirstOrDefault(s => s.BarCode == barCode); //如查不到，返回null。
+            //开始逻辑判断
+            //有待先加身份证验证！
+            if (curShareholder == null) return "无法找到此股东！";
+            else
+            {
+                curShareholder.T0Result = int.Parse(id.Substring(5, 1));
+                curShareholder.T1Result = int.Parse(id.Substring(6, 1));
+                curShareholder.T2Result = int.Parse(id.Substring(7, 1));
+                curShareholder.T3Result = int.Parse(id.Substring(8, 1));
+                curShareholder.T4Result = int.Parse(id.Substring(9, 1));
+                curShareholder.T5Result = int.Parse(id.Substring(10, 1));
+                curShareholder.T6Result = int.Parse(id.Substring(11, 1));
+                curShareholder.T7Result = int.Parse(id.Substring(12, 1));
+                curShareholder.T8Result = int.Parse(id.Substring(13, 1));
+                curShareholder.T9Result = int.Parse(id.Substring(14, 1));
+                curShareholder.VotingTime = DateTime.Now; //投票时间
+                curShareholder.IsVoted = true;//设置股东投票标识符
+                db.SaveChanges();
+                return "投票完成！";
+            }
+        }
+
+        // PUT: api/VoteAdmin/5
+        public void Put(int id, [FromBody]string value)
+        {
+        }
+
+        // DELETE: api/VoteAdmin/5
+        public void Delete(int id)
+        {
+        }
+    }
+}

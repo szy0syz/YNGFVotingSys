@@ -1,0 +1,63 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Web.Http;
+
+namespace WebAPI.Controllers
+{
+    public class SignsController : ApiController
+    {
+        /// <summary>
+        /// GET: api/Signs ，返回已经到人员列表
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<Models.SignsList> Get()
+        {
+            DataService.SZYdbEntities db = new DataService.SZYdbEntities();
+            var lists = db.Shares.Where(s => s.IsPresent == true).OrderBy(s=>s.BarCode)
+                .Select(s => new Models.SignsList {BarCode = s.BarCode, Name = s.Name, Time = s.Time.ToString() });
+
+            return lists;
+        }
+
+        // GET: api/Signs/5
+        public string Get(int id)
+        {
+            return "value";
+        }
+
+        // POST: api/Signs
+        public string Post([FromBody]string value)
+        {
+
+            return value;
+        }
+
+        // POST: api/Signs/5
+        public string Post(int id)
+        {
+            DataService.SZYdbEntities db = new DataService.SZYdbEntities();
+            var curShareholder = db.Shares.FirstOrDefault(s => s.BarCode == id.ToString());
+            if (curShareholder == null) return "无法找到此股东！";
+            else
+            {
+                curShareholder.IsPresent = true;
+                curShareholder.Time = DateTime.Now;
+                db.SaveChanges();
+                return "签到成功！";
+            }
+        }
+
+        // PUT: api/Signs/5
+        public void Put(int id, [FromBody]string value)
+        {
+        }
+
+        // DELETE: api/Signs/5
+        public void Delete(int id)
+        {
+        }
+    }
+}
